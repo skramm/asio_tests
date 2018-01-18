@@ -17,14 +17,8 @@ see:
 
 using boost::asio::ip::udp;
 
-#if 0
-void print(const boost::system::error_code& /*e*/)
-{
-  std::cout << "Timer: Hello, world!" << std::endl;
-}
-#endif
 
-void my_write_handler_3( const boost::system::error_code& ec, std::size_t bytes_transferred, udp::socket* socket )
+void write_handler( const boost::system::error_code& ec, std::size_t bytes_transferred, udp::socket* socket )
 {
 	std::cout << "Write handler: bt=" << bytes_transferred << "\n";
 
@@ -73,10 +67,10 @@ int main( int argc, char* argv[] )
 			boost::asio::const_buffers_1 my_buff = boost::asio::buffer( str );
 
 			socket.async_send_to(
-				my_buff,            // const ConstBufferSequence & buffers,
-				receiver_endpoint,  // const endpoint_type & destination,
+				my_buff,
+				receiver_endpoint,
 				boost::bind(
-					my_write_handler_3,    // WriteHandler && handler);
+					write_handler,
 					boost::asio::placeholders::error,
 					boost::asio::placeholders::bytes_transferred,
 					&socket

@@ -65,7 +65,7 @@ class my_udp_server
 			std::cout << "bt=" << bytes_rx << " bytes\n";
 
 			std::cout << "data:*";
-			std::cout.write( _recv_buffer.data(), bytes_transferred );
+			std::cout.write( _recv_buffer.data(), bytes_rx );
 			std::cout << "*";
 
 			std::string str( "ok\n" );
