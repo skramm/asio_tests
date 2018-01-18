@@ -6,19 +6,6 @@ Asynchronous send, no reception
 
 */
 
-// http://www.boost.org/doc/libs/1_65_1/doc/html/boost_asio/tutorial/tutdaytime4.html
-
-//
-// udp_client_1.cpp
-// ~~~~~~~~~~
-//
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
-
 #include <iostream>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
@@ -58,19 +45,9 @@ int main(int argc, char* argv[])
 		udp::socket socket( io_service );
 		socket.open( udp::v4() );
 
-#if 0
-//		boost::asio::io_context io;
-		boost::asio::deadline_timer t( io_service, boost::posix_time::seconds(5) );
-		t.async_wait(&print);
-//		std::cout << "io_service.run()\n";
-//		io_service.run();
-#endif
 
 		int iter(0);
-
-
 		do
-
 		{
 			std::string str;
 			std::cout << "enter string: ";
@@ -88,24 +65,6 @@ int main(int argc, char* argv[])
 			io_service.run();
 		}
 		while(1);
-
-
-/*
-		do
-		{
-			std::string str;
-			std::cout << "enter string: ";
-			std::cin >> str;
-			socket.send_to( boost::asio::buffer( str ), receiver_endpoint );
-
-			boost::array<char, 128> recv_buf;
-			udp::endpoint sender_endpoint;
-			size_t len = socket.receive_from( boost::asio::buffer(recv_buf), sender_endpoint );
-
-			std::cout.write( recv_buf.data(), len );
-		}
-		while( 1 );
-*/
 	}
 	catch (std::exception& e)
 	{

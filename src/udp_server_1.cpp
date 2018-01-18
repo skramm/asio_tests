@@ -57,19 +57,18 @@ class my_udp_server
 			std::cout << "handler_tx(): bytes_transferred=" << bytes_transferred << "\n";
 		}
 
-	void handler_rx( const boost::system::error_code& error, std::size_t bytes_transferred )
+	void handler_rx( const boost::system::error_code& error, std::size_t bytes_rx )
 	{
-		std::cout << "handle_receive(), bt=" << bytes_transferred << "\n";
+		std::cout << "handle_receive(), bt=" << bytes_rx << "\n";
 		if( !error || error == boost::asio::error::message_size )
 		{
-			std::cout << "bt=" << bytes_transferred << " bytes\n";
+			std::cout << "bt=" << bytes_rx << " bytes\n";
 
 			std::cout << "data:*";
 			std::cout.write( _recv_buffer.data(), bytes_transferred );
 			std::cout << "*";
 
 			std::string str( "ok\n" );
-//			std::vector<char> vec( str.begin(), str.end() );
 #if 0
 			_socket.async_send_to(
 				boost::asio::buffer(str),
