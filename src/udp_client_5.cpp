@@ -1,7 +1,7 @@
 /**
 udp_client_5.cpp
 
-Synchronous send, asynchronous reception: OK !
+Synchronous send, asynchronous reception and timeout: OK !
 
 see:
  - http://www.boost.org/doc/libs/master/doc/html/boost_asio.html
@@ -10,32 +10,57 @@ see:
 */
 
 #include <iostream>
-#include <boost/array.hpp>
+//#include <boost/array.hpp>
+#include <array>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include "common_header.hpp"
 
 using boost::asio::ip::udp;
 
-//---------------------------------------------------------------------------------------------------
-void timer_print( const boost::system::error_code& /*e*/)
-{
-	std::cout << "Timer:no response from server\n";
-}
-void timer_print_2( const boost::system::error_code& /*e*/, udp::socket* socket )
-{
-	std::cout << "Timer:no response from server\n";
-	socket->cancel();
-}
+#define LOG std::cout << __FUNCTION__ << ": "
 
 //---------------------------------------------------------------------------------------------------
+/// callback for async timer
+/**
+The funny looking switch structure is because this handler gets called even when timer has been canceled.
+*/
+void timer_handler( const boost::system::error_code& error, udp::socket* socket )
+{
+	switch( error.value() )
+	{
+		case boost::system::errc::operation_canceled: // do nothing
+		break;
+		case 0:
+		{
+			LOG << "no response from server\n";
+			socket->cancel();  // cancel remaing async operations
+		}
+		break;
+		default: // all other values
+			LOG << "unexpected error, message=" << error.message() << "\n";
+	}
+}
+//---------------------------------------------------------------------------------------------------
+/// callback for async reception
 void
-read_handler( const boost::system::error_code& /*error*/, std::size_t bytes_rx )
+read_handler( const boost::system::error_code& error, std::size_t bytes_rx, boost::asio::deadline_timer* timer )
 {
-	std::cout << "read_handler() bt=" << bytes_rx << "\n";
+	switch( error.value() )
+	{
+		case boost::system::errc::operation_canceled: // do nothing
+		break;
+		case 0:
+		{
+			LOG << "bt=" << bytes_rx << "\n";
+			timer->cancel(); // cancel timer as we have received the acknowledge
+		}
+		break;
+
+		default: // all other values
+			LOG << "unexpected error, message=" << error.message() << "\n";
+	}
 }
-
-
 //---------------------------------------------------------------------------------------------------
 int
 main( int argc, char* argv[] )
@@ -72,21 +97,22 @@ main( int argc, char* argv[] )
 				endpoint
 			);
 			std::cout << "-data is sent\n";
-			boost::array<char, 128> recv_buf;
-			socket.async_receive_from( boost::asio::buffer(recv_buf), endpoint, read_handler );
 
 			std::cout << "starting timer\n";
 			boost::asio::deadline_timer timer( io_service, boost::posix_time::seconds(2));
-#if 1
-			timer.async_wait( &timer_print );
-#else
-			timer.async_wait(
-					boost::bind(
-						&timer_print_2,
-						&socket
-					);
+			timer.async_wait( boost::bind( timer_handler, boost::asio::placeholders::error, &socket ) );
+
+			std::array<char, 128> recv_buf;
+			socket.async_receive_from(
+				boost::asio::buffer(recv_buf),
+				endpoint,
+				boost::bind(
+					read_handler,
+					boost::asio::placeholders::error,
+					boost::asio::placeholders::bytes_transferred,
+					&timer
+				)
 			);
-#endif
 			io_service.run();
 		}
 		while(1);

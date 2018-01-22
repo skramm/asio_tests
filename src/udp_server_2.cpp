@@ -1,24 +1,19 @@
-/*
-http://www.boost.org/doc/libs/1_65_1/doc/html/boost_asio/tutorial/tutdaytime6.html
-http://www.boost.org/doc/libs/1_65_1/doc/html/boost_asio/tutorial/tutdaytime6/src.html
-*/
-//
-// udp_server_1.cpp
-// ~~~~~~~~~~
-//
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
+/**
+ udp_server_2.cpp
+
+ callback is outside of class
+
+ */
 
 #include <ctime>
 #include <iostream>
+#include <functional>
 #include <string>
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
-//#include <boost/shared_ptr.hpp>
 #include <boost/asio.hpp>
+
+#define DO_SEND_ACK
 
 using boost::asio::ip::udp;
 
@@ -32,31 +27,26 @@ class my_udp_server
 //			start_receive();
 		}
 
-	public:
 		void start_receive()
 		{
 			_socket.async_receive_from(
 				boost::asio::buffer( _recv_buffer),
 				_remote_endpoint,
+#if 0
 				boost::bind(
-					&my_udp_server::handler_rx,
+					my_udp_server::_rx_handler,
 					this,
 					boost::asio::placeholders::error,
 					boost::asio::placeholders::bytes_transferred
 				)
+#else
+				my_udp_server::_rx_handler
+#endif
 			);
 		}
-
 	private:
-		static void handler_tx(
-			const boost::system::error_code& error, // Result of operation.
-			std::size_t bytes_transferred           // Number of bytes sent.
-		)
-		{
-			std::cout << "handler_tx(): bytes_transferred=" << bytes_transferred << "\n";
-		}
 
-	void handler_rx( const boost::system::error_code& error, std::size_t bytes_rx )
+/*	void handler_rx( const boost::system::error_code& error, std::size_t bytes_rx )
 	{
 		static int iter(1);
 		std::cout << "rx handler(), call " << iter++ << "\n";
@@ -87,15 +77,22 @@ class my_udp_server
 		}
 		else
 			std::cout << "error on receive\n";
-	}
+	}*/
 
 	udp::socket   _socket;
 	udp::endpoint _remote_endpoint;
 	boost::array<char, 1024> _recv_buffer;
 	bool _sendack;
+	std::function< void(const boost::system::error_code&, std::size_t bytes_rx ) > _rx_handler;
 };
 
 //-----------------------------------------------------------------------------------
+void
+my_rx_handler( const boost::system::error_code&, std::size_t bytes_rx )
+{
+	std::cout << "my_rx_handler()\n";
+}
+
 int main( int argc, const char** argv )
 {
 	bool sendack(false);
@@ -112,6 +109,7 @@ int main( int argc, const char** argv )
 
 		my_udp_server server( io_service, 12345, sendack );
 		std::cout << "server created\n";
+
 		server.start_receive();
 		std::cout << "server started\n";
 
