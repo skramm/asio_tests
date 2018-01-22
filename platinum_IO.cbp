@@ -31,7 +31,9 @@
 		<Unit filename="src/udp_client_4.cpp" />
 		<Unit filename="src/udp_client_5.cpp" />
 		<Unit filename="src/udp_server_1.cpp" />
+		<Unit filename="src/udp_server_2.cpp" />
 		<Unit filename="src/udp_server_ack.cpp" />
+		<Unit filename="src/udp_server_plati_1.cpp" />
 		<Extensions>
 			<envvars />
 			<code_completion />
