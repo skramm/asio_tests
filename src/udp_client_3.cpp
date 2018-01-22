@@ -31,9 +31,7 @@ void write_handler( const boost::system::error_code& ec, std::size_t bytes_trans
 	std::cout << "\n";
 }
 
-using boost::asio::ip::udp;
-
-//---------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------
 int main( int argc, char* argv[] )
 {
 	std::cout << GetBoostVersion();
@@ -59,10 +57,11 @@ int main( int argc, char* argv[] )
 		int iter(0);
 		do
 		{
+			io_service.reset();
 			std::string str;
 			std::cout << "enter string: ";
 			std::cin >> str;
-			std::string str_frame( "frame " + std::to_string(iter) + ": message=" + str + "\n" );
+			std::string str_frame( "frame " + std::to_string(iter) + ": message=" + str );
 
 			boost::asio::const_buffers_1 my_buff = boost::asio::buffer( str );
 

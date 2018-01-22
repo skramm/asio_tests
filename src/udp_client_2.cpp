@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 			std::string str;
 			std::cout << "enter string: ";
 			std::cin >> str;
-			std::string str_frame( "frame " + std::to_string(iter) + ": message=" + str + "\n" );
+			std::string str_frame( "frame " + std::to_string(iter) + ": message=" + str );
 
 			boost::asio::const_buffers_1 my_buff = boost::asio::buffer( str );
 

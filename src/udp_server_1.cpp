@@ -1,4 +1,3 @@
-
 /*
 http://www.boost.org/doc/libs/1_65_1/doc/html/boost_asio/tutorial/tutdaytime6.html
 http://www.boost.org/doc/libs/1_65_1/doc/html/boost_asio/tutorial/tutdaytime6/src.html
@@ -18,18 +17,19 @@ http://www.boost.org/doc/libs/1_65_1/doc/html/boost_asio/tutorial/tutdaytime6/sr
 #include <string>
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>
 #include <boost/asio.hpp>
+
+#define DO_SEND_ACK
 
 using boost::asio::ip::udp;
 
-//std::string prog( "-server: " );
-
+//-----------------------------------------------------------------------------------
 class my_udp_server
 {
 	public:
-		my_udp_server( boost::asio::io_service& io_service, int port_no )
-			: _socket( io_service, udp::endpoint( udp::v4(), port_no ) )
+		my_udp_server( boost::asio::io_service& io_service, int port_no, bool sendack=false )
+			: _socket( io_service, udp::endpoint( udp::v4(), port_no ) ), _sendack(sendack)
 		{
 			start_receive();
 		}
@@ -59,60 +59,69 @@ class my_udp_server
 
 	void handler_rx( const boost::system::error_code& error, std::size_t bytes_rx )
 	{
-		std::cout << "handle_receive(), bt=" << bytes_rx << "\n";
+		static int iter(1);
+		std::cout << "rx handler(), call " << iter++ << "\n";
 		if( !error || error == boost::asio::error::message_size )
 		{
-			std::cout << "bt=" << bytes_rx << " bytes\n";
-
-			std::cout << "data:*";
+			std::cout << "bt=" << bytes_rx << " bytes, data=*";
 			std::cout.write( _recv_buffer.data(), bytes_rx );
-			std::cout << "*";
+			std::cout << "*\n";
 
-			std::string str( "ok\n" );
+			if( _sendack )
+			{
+				std::string str( "ok\n" );
 #if 0
-			_socket.async_send_to(
-				boost::asio::buffer(str),
-				_remote_endpoint,
-				handler_tx
-			);
+				_socket.async_send_to(          // asynchronous send acknowledge
+					boost::asio::buffer(str),
+					_remote_endpoint,
+					handler_tx
+				);
 #else
-			_socket.send_to(
-				boost::asio::buffer(str),
-				_remote_endpoint
-			);
+				std::cout << "sending ack\n";
+				_socket.send_to(                // synchronous send acknowledge
+					boost::asio::buffer(str),
+					_remote_endpoint
+				);
 #endif
+			}
 			start_receive();
 		}
 		else
 			std::cout << "error on receive\n";
 	}
 
-//	void handle_send(boost::shared_ptr<std::string> /*message*/, const boost::system::error_code& /*error*/, std::size_t /*bytes_transferred*/ )
-//	{
-//		std::cout << prog << "handle_send()\n";
-//	}
-//
 	udp::socket   _socket;
 	udp::endpoint _remote_endpoint;
 	boost::array<char, 1024> _recv_buffer;
+	bool _sendack;
 };
 
-int main()
+//-----------------------------------------------------------------------------------
+int main( int argc, const char** argv )
 {
+	bool sendack(false);
+	if( argc > 1 )
+	{
+		if( std::string(argv[1]) == "SENDACK" )
+		sendack = true;
+	}
+
 	try
 	{
 		boost::asio::io_service io_service;
-		std::cout << "io_service created\n";
+		std::cout << "io_service created, " << (sendack?"sending ack": "no ack send") << "\n";
 
-		my_udp_server server( io_service, 12345 );
+		my_udp_server server( io_service, 12345, sendack );
 		std::cout << "server created\n";
 
 		io_service.run();
 	}
-	catch (std::exception& e)
+	catch( std::exception& e )
 	{
 		std::cerr << "catch error: " << e.what() << std::endl;
 	}
 
 return 0;
 }
+//-----------------------------------------------------------------------------------
+
