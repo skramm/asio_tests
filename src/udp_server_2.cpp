@@ -9,20 +9,24 @@
 #include <iostream>
 #include <functional>
 #include <string>
-#include <boost/array.hpp>
+
+#include <array>
+
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 
-#define DO_SEND_ACK
 
 using boost::asio::ip::udp;
-typedef std::function< void( const boost::system::error_code&, std::size_t bytes_rx, int ) > CALLBACK_FUNCTION_T;
+
+typedef std::function< void( const boost::system::error_code&, std::size_t bytes_rx, int ) > CALLBACK_T;
+
+//#define THIS_WORKS
 
 //-----------------------------------------------------------------------------------
-class my_udp_server
+class udp_server
 {
 	public:
-		my_udp_server( boost::asio::io_service& io_service, int port_no, bool sendack=false )
+		udp_server( boost::asio::io_service& io_service, int port_no, bool sendack=false )
 			: _socket( io_service, udp::endpoint( udp::v4(), port_no ) ), _sendack(sendack)
 		{
 		}
@@ -32,64 +36,87 @@ class my_udp_server
 			_socket.async_receive_from(
 				boost::asio::buffer( _recv_buffer),
 				_remote_endpoint,
-#if 1
 				boost::bind(
-					my_udp_server::_rx_handler,
-					this,
+					udp_server::_rx_handler,
+//					this,
 					boost::asio::placeholders::error,
 					boost::asio::placeholders::bytes_transferred,
 					42
 				)
-#else
-				my_udp_server::_rx_handler
-#endif
 			);
 		}
-		void assignCallback( CALLBACK_FUNCTION_T f )
+
+#ifndef THIS_WORKS
+		void assignCallback( CALLBACK_T f )
 		{
 			_rx_handler = f;
 		}
+#endif
 
-	private:
-
+	protected:
 		udp::socket              _socket;
 		udp::endpoint            _remote_endpoint;
-		boost::array<char, 1024> _recv_buffer;
+
+	private:
+		std::array<char, 1024> _recv_buffer;
 		bool                     _sendack;
-		CALLBACK_FUNCTION_T      _rx_handler;
+
+#ifdef THIS_WORKS
+		void _rx_handler( const boost::system::error_code&, std::size_t bytes_rx, int );
+#else
+		CALLBACK_T      _rx_handler;
+#endif
 };
 
 //-----------------------------------------------------------------------------------
-void
-my_rx_handler( const boost::system::error_code& error, std::size_t bytes_rx, int third )
+#if 1
+class my_udp_server : public udp_server
 {
-	std::cout << "my_rx_handler() !\n";
-}
+	private:
+		void my_rx_handler( const boost::system::error_code& error, std::size_t bytes_rx, int third )
+		{
+			std::cout << "my_rx_handler() !\n";
+			std::cout << "sending ack\n";
+			std::string str("ok");
+			_socket.send_to(                // synchronous send acknowledge
+				boost::asio::buffer(str),
+				_remote_endpoint
+			);
+		}
 
+	public:
+		my_udp_server(boost::asio::io_service& io_service, int port_no )
+			: udp_server( io_service, port_no, true )
+		{
+			assignCallback( CALLBACK_T(&my_udp_server::my_rx_handler) );
+		}
+};
+#endif
+//-----------------------------------------------------------------------------------
 int
 main( int argc, const char** argv )
 {
-	bool sendack(false);
+/*	bool sendack(false);
 	if( argc > 1 )
 	{
 		if( std::string(argv[1]) == "SENDACK" )
 		sendack = true;
-	}
+	}*/
 
 	try
 	{
 		boost::asio::io_service io_service;
-		std::cout << "io_service created, " << (sendack?"sending ack": "no ack send") << "\n";
-
-		my_udp_server server( io_service, 12345, sendack );
+		std::cout << "io_service created\n";
+/*
+		my_udp_server server( io_service, 12345 );
 		std::cout << "server created\n";
 
-		server.assignCallback( my_rx_handler );
-
+//		server.assignCallback( my_rx_handler );
 		server.start_receive();
 		std::cout << "server started\n";
 
 		io_service.run();
+*/
 	}
 	catch( std::exception& e )
 	{

@@ -24,7 +24,6 @@
 		</Compiler>
 		<Unit filename="Makefile" />
 		<Unit filename="src/common_header.hpp" />
-		<Unit filename="src/so_q1.cpp" />
 		<Unit filename="src/udp_client_1.cpp" />
 		<Unit filename="src/udp_client_2.cpp" />
 		<Unit filename="src/udp_client_3.cpp" />

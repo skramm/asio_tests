@@ -1,26 +1,22 @@
-/*
-http://www.boost.org/doc/libs/1_65_1/doc/html/boost_asio/tutorial/tutdaytime6.html
-http://www.boost.org/doc/libs/1_65_1/doc/html/boost_asio/tutorial/tutdaytime6/src.html
+/**
+udp_server_1.cpp
+
+Build from:
+ - http://www.boost.org/doc/libs/1_65_1/doc/html/boost_asio/tutorial/tutdaytime6.html
+ - http://www.boost.org/doc/libs/1_65_1/doc/html/boost_asio/tutorial/tutdaytime6/src.html
 */
-//
-// udp_server_1.cpp
-// ~~~~~~~~~~
-//
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
 
 #include <ctime>
 #include <iostream>
 #include <string>
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
-//#include <boost/shared_ptr.hpp>
 #include <boost/asio.hpp>
 
 using boost::asio::ip::udp;
+
+
+//#define ASYNC_SEND
 
 //-----------------------------------------------------------------------------------
 class my_udp_server
@@ -48,6 +44,8 @@ class my_udp_server
 		}
 
 	private:
+
+#ifdef ASYNC_SEND
 		static void handler_tx(
 			const boost::system::error_code& error, // Result of operation.
 			std::size_t bytes_transferred           // Number of bytes sent.
@@ -55,6 +53,7 @@ class my_udp_server
 		{
 			std::cout << "handler_tx(): bytes_transferred=" << bytes_transferred << "\n";
 		}
+#endif // ASYNC_SEND
 
 	void handler_rx( const boost::system::error_code& error, std::size_t bytes_rx )
 	{
@@ -69,7 +68,8 @@ class my_udp_server
 			if( _sendack )
 			{
 				std::string str( "ok\n" );
-#if 0
+
+#ifdef ASYNC_SEND
 				_socket.async_send_to(          // asynchronous send acknowledge
 					boost::asio::buffer(str),
 					_remote_endpoint,
@@ -112,6 +112,7 @@ int main( int argc, const char** argv )
 
 		my_udp_server server( io_service, 12345, sendack );
 		std::cout << "server created\n";
+
 		server.start_receive();
 		std::cout << "server started\n";
 
