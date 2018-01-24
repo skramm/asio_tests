@@ -6,11 +6,12 @@ udp_server_plati_1.cpp
 #include <ctime>
 #include <iostream>
 #include <string>
+//#include <array>
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 
-#define DO_SEND_ACK
+
 
 using boost::asio::ip::udp;
 
