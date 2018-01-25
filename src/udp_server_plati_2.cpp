@@ -5,6 +5,7 @@ udp_server_plati_2.cpp
 
 
 #include "udp_server.hpp"
+#include "plati_graph.hpp"
 
 #include <ctime>
 #include <iostream>
@@ -42,10 +43,6 @@ class Event
 struct PlatinumData_3D
 {
 };
-/// holds the graph of spheres
-struct PlatinumData_graph
-{
-};
 
 //-----------------------------------------------------------------------------------
 /// Server current status state
@@ -64,7 +61,7 @@ class PlatiServer : public udp_server<BUFFER_SIZE>
 			:udp_server( io_service, port_no )
 		{}
 
-		/// implementation of root class virtual function
+		/// concrete implementation of base class virtual function
 		std::vector<BYTE> GetResponse( const udp_server<BUFFER_SIZE>::Buffer_t& buffer ) const
 		{
 			switch( _status )
@@ -78,8 +75,6 @@ class PlatiServer : public udp_server<BUFFER_SIZE>
 		}
 
 	private:
-		PlatinumData_3D    _data3d;
-		PlatinumData_graph _dataGraph;
 		SERSTAT _status;
 		std::vector<Event> _vevents; ///< holds all the events
 };
@@ -87,6 +82,11 @@ class PlatiServer : public udp_server<BUFFER_SIZE>
 int
 main( int argc, const char** argv )
 {
+	PlatinumData_3D    data3d;
+	PlatinumData_graph dataGraph;
+
+	dataGraph.Load( "aaa" ); // load graph in RAM
+
 	try
 	{
 		boost::asio::io_service io_service;
@@ -94,6 +94,11 @@ main( int argc, const char** argv )
 
 		PlatiServer server( io_service, 12345 );
 		std::cout << "server created\n";
+
+
+		server.start_receive();
+		std::cout << "server waiting\n";
+
 
 		io_service.run();
 	}

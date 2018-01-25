@@ -9,7 +9,8 @@ COLOR_OFF="\e[0m"
 #--------------------------------
 # general compiler flags
 CFLAGS = -std=c++11 -Wall -O2 -Iinclude
-LDFLAGS += -L/usr/lib/x86_64-linux-gnu/ -lboost_system -lboost_thread -pthread
+#LDFLAGS += -L/usr/lib/x86_64-linux-gnu/ -lboost_system -lboost_thread -pthread -lboost_iostreams -lboost_serialization
+LDFLAGS += -L/usr/lib/x86_64-linux-gnu/ -lboost_system -lboost_thread -pthread -lboost_serialization
 
 # needed, so object files that are inner part of successive pattern rules don't get erased at the end of build
 #.PRECIOUS: obj/demo/%.o obj/lib/release/%.o obj/lib/debug/%.o
