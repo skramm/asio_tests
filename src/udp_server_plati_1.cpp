@@ -1,5 +1,7 @@
 /**
 udp_server_plati_1.cpp
+
+demo of generic udp server, may send acknowledge
 */
 
 
@@ -114,13 +116,6 @@ class PlatiServer : public my_udp_server
 //-----------------------------------------------------------------------------------
 int main( int argc, const char** argv )
 {
-/*	bool sendack(false);
-	if( argc > 1 )
-	{
-		if( std::string(argv[1]) == "SENDACK" )
-		sendack = true;
-	}*/
-
 	try
 	{
 		boost::asio::io_service io_service;

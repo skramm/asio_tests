@@ -1,5 +1,8 @@
 /**
 udp_server_plati_2.cpp
+
+demo of server, uses templated server code
+
 */
 
 
@@ -21,7 +24,9 @@ using boost::asio::ip::udp;
 /// The different types of events that can happen during the communication process in the platinum project
 enum EventType
 {
-	ET_LOST_CLIENT
+	ET_DUMMY
+	,ET_CHANGED_STATUS
+	,ET_LOST_CLIENT
 };
 //-----------------------------------------------------------------------------------
 /// Holds an "event", i.e. something that happened. Stored in class PlatiServer so that it can be logged
@@ -46,13 +51,22 @@ struct PlatinumData_3D
 
 //-----------------------------------------------------------------------------------
 /// Server current status state
-enum SERSTAT
+enum SERSTAT: BYTE
 {
 	STAT_WAIT               ///< initial waiting state
 	,STAT_GOT_ID            ///< got agent id, waiting for request
-	,STAT_GOT_FULL_REQUEST  ///< got all data to complete request
+	,STAT_GOT_FULL_REQUEST  ///< got all data to complete request (initial pos, destination)
+	,STAT_SPHERE_SENT
 };
 
+//-----------------------------------------------------------------------------------
+/// Identification of received message. Always first byte of frame (except for INVALID)
+enum RX_MESSAGE_ID: BYTE
+{
+	RXM_INITIAL_CONTACT
+
+	,RXM_INVALID
+};
 //-----------------------------------------------------------------------------------
 class PlatiServer : public udp_server<BUFFER_SIZE>
 {

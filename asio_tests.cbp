@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="asio_tests" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="bin/Release/platinum_IO" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="Makefile" />
+		<Unit filename="so_q1.txt" />
+		<Unit filename="src/bgl_serial_1.cpp" />
+		<Unit filename="src/bgl_serial_2.cpp" />
+		<Unit filename="src/common_header.hpp" />
+		<Unit filename="src/fp_test.cpp" />
+		<Unit filename="src/plati_graph.hpp" />
+		<Unit filename="src/tcp_client_1.cpp" />
+		<Unit filename="src/tcp_client_2.cpp" />
+		<Unit filename="src/tcp_server_1.cpp" />
+		<Unit filename="src/tcp_server_2.cpp" />
+		<Unit filename="src/thread_1.cpp" />
+		<Unit filename="src/udp_client_1.cpp" />
+		<Unit filename="src/udp_client_2.cpp" />
+		<Unit filename="src/udp_client_3.cpp" />
+		<Unit filename="src/udp_client_4.cpp" />
+		<Unit filename="src/udp_client_5.cpp" />
+		<Unit filename="src/udp_server.hpp" />
+		<Unit filename="src/udp_server_1.cpp" />
+		<Unit filename="src/udp_server_2.cpp" />
+		<Unit filename="src/udp_server_ack.cpp" />
+		<Unit filename="src/udp_server_plati_1.cpp" />
+		<Unit filename="src/udp_server_plati_2.cpp" />
+		<Extensions>
+			<envvars />
+			<code_completion />
+			<lib_finder disable_auto="1" />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

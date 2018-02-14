@@ -1,7 +1,8 @@
 /**
 \file plati_graph.hpp
-
+\brief wrapper around the graph modeling the city. Uses BGL
 */
+
 #ifndef HG_PLATI_GRAPH_HPP
 #define HG_PLATI_GRAPH_HPP
 
@@ -20,13 +21,30 @@ struct platiVertex
 {
 	double lat;
 	double lon;
+	std::string filename;
 };
 
+//-------------------------------------------------------------------
+/// serialization function
+namespace boost {
+namespace serialization {
+	template<class Archive>
+	void serialize( Archive& ar, platiVertex& pv, const unsigned int /*version*/ )
+	{
+		ar & pv.lat;
+		ar & pv.lon;
+		ar & pv.filename;
+	}
+} // namespace serialization
+} // namespace boost
+
+
+//-------------------------------------------------------------------
 typedef boost::adjacency_list<
 	boost::vecS
 	,boost::vecS
 	,boost::undirectedS
-//	,platiVertex
+	,platiVertex
 	> plati_graph_t;
 
 typedef boost::graph_traits<plati_graph_t>::vertex_descriptor vertex_t;
@@ -45,7 +63,6 @@ struct PlatinumData_graph
 			std::ifstream fs( filename );
 			boost::archive::text_iarchive ia( fs );
 			ia >> _graph;
-
 		}
 
 		void SaveGraph( std::string filename ) const

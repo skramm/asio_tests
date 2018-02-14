@@ -72,7 +72,7 @@ GenerateRandomGraph( size_t nb_vertices, size_t nb_egdes )
 	return g;
 }
 //-------------------------------------------------------------------
-
+/// serialization function
 namespace boost {
 namespace serialization {
 
