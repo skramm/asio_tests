@@ -28,16 +28,19 @@ class tcp_server
 		{
 			while(1)
 			{
-				std::cout << "wait...\n";
+				_socket.close();
+
+//				std::cout << "listen...\n";
+//				_acceptor.listen();
+
+				std::cout << "accept...\n";
 				_acceptor.accept( _socket );   // wait and listen
 
-				std::cout << "got something!\n";
+				std::cout << "Reading data\n";
 
-//				std::array<char, 100000> buf;
 				boost::system::error_code err;
 
 				std::size_t nb_bytes =_socket.read_some( boost::asio::buffer(_buff), err );
-	//			std::size_t nb_bytes =_socket.receive( boost::asio::buffer(buf) );
 
 				std::cout << "RX " << nb_bytes << " bytes, err=" << err.message() << '\n';
 				std::cout << "data " << (int)_buff[0] << ", " << (int)_buff[1] << "\n";
@@ -46,14 +49,15 @@ class tcp_server
 				std::array<char, 128> buf2 = {5,6};
 				size_t len1 = _socket.send( boost::asio::buffer(buf2) );
 				std::cout << "TX " << len1 << " bytes\n";
-				_acceptor.close();
+//				_acceptor.close();
+
 			}
 		}
 
 	private:
 		std::vector<char> _buff;
-		tcp::acceptor _acceptor;
-		tcp::socket   _socket;
+		tcp::acceptor     _acceptor;
+		tcp::socket       _socket;
 };
 //-----------------------------------------------------------------------------------
 int main( int argc, char* argv[] )
@@ -64,7 +68,7 @@ int main( int argc, char* argv[] )
 		tcp_server server( io_service, 12345 );
 		server.allocate( 20 ); // nb of kB of buffer
 		server.start();
-		io_service.run();
+//		io_service.run();
 	}
 	catch (std::exception& e)
 	{

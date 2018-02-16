@@ -34,20 +34,27 @@ int main(int argc, char* argv[])
 		std::cout << "connecting socket...\n";
 		boost::asio::connect(socket, endpoint_iterator);
 
-		{
-			std::cout << "loop start\n";
+		char k;
+		std::cout << "enter 1 or 2:";
+		std::cin >> k;
 
-			std::array<char, 100000> buf1 = {1,2,3,4};
-			boost::system::error_code error;
 
-			size_t len1 = socket.send( boost::asio::buffer(buf1) );
-			std::cout << "TX " << len1 << " bytes\n";
+		std::array<char, 5> buf_tx;
+		buf_tx[0] = (k=='1'?1:2);
+		std::cout << "first byte=" << (int)buf_tx[0] << '\n';
+		boost::system::error_code error;
 
-			std::array<char, 128> buf2 = {55,66};
-			size_t len2 = socket.receive( boost::asio::buffer(buf2) );
-			std::cout << "RX " << len2 << " bytes\n";
-			std::cout << "data " << (int)buf2[0] << ", " << (int)buf2[1] << "\n";
-		}
+		size_t len1 = socket.send( boost::asio::buffer(buf_tx,1) );
+		std::cout << "TX " << len1 << " bytes\n";
+
+		std::array<char, 128> buf_rx;
+		size_t len2 = socket.receive( boost::asio::buffer(buf_rx) );
+		std::cout << "RX " << len2 << " bytes\n";
+		std::string rx_data;
+		rx_data.resize(len2);
+		std::copy( buf_rx.begin(), buf_rx.begin()+len2, rx_data.begin() );
+		std::cout << "data " << rx_data << '\n';
+
 	}
 	catch (std::exception& e)
 	{

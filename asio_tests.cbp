@@ -33,7 +33,9 @@
 		<Unit filename="src/tcp_client_2.cpp" />
 		<Unit filename="src/tcp_server_1.cpp" />
 		<Unit filename="src/tcp_server_2.cpp" />
+		<Unit filename="src/tcp_server_v1.hpp" />
 		<Unit filename="src/thread_1.cpp" />
+		<Unit filename="src/tst_tcp_server_v1.cpp" />
 		<Unit filename="src/udp_client_1.cpp" />
 		<Unit filename="src/udp_client_2.cpp" />
 		<Unit filename="src/udp_client_3.cpp" />
