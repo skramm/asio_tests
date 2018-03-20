@@ -26,7 +26,7 @@ class TcpServer_v1
 			_rx_buff.resize( n*1000 );
 		}
 
-		virtual std::vector<BYTE> getResponseData() const = 0;
+		virtual std::pair<std::vector<BYTE>,bool> getResponseData() const = 0;
 		void start()
 		{
 			assert( _rx_buff.size() );
@@ -44,9 +44,9 @@ class TcpServer_v1
 				std::cout << "RX " << nb_bytes << " bytes, err=" << err.message() << '\n';
 				if( !err )
 				{
-					std::vector<BYTE> resp = getResponseData();
+					auto resp = getResponseData();
 
-					size_t len_tx = _socket.send( boost::asio::buffer(resp) );
+					size_t len_tx = _socket.send( boost::asio::buffer(resp.first) );
 					std::cout << "TX: " << len_tx << " bytes\n";
 				}
 				else

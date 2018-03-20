@@ -1,12 +1,12 @@
 /**
-tst_tcp_server_v1.cpp
+tst_tcp_server_v2.cpp
 */
-#include "tcp_server_v1.hpp"
+#include "tcp_server_v2.hpp"
 
 //-----------------------------------------------------------------------------------
-struct MyTcpServer: public TcpServer_v1
+struct MyTcpServer: public TcpServer_v2
 {
-	MyTcpServer( boost::asio::io_service& io_service, int port ) : TcpServer_v1( io_service, port )
+	MyTcpServer( boost::asio::io_service& io_service, int port ) : TcpServer_v2( io_service, port )
 	{}
 
 	std::pair<std::vector<BYTE>,bool> getResponseData() const
@@ -43,7 +43,7 @@ int main( int argc, char* argv[] )
 		MyTcpServer server( io_service, 12345 );
 		server.allocate( 20 ); // nb of kB of buffer
 		server.start();
-//		io_service.run();
+		io_service.run();
 	}
 	catch (std::exception& e)
 	{

@@ -33,7 +33,7 @@ class tcp_server
 //				std::cout << "listen...\n";
 //				_acceptor.listen();
 
-				std::cout << "accept...\n";
+				std::cout << "waiting...\n";
 				_acceptor.accept( _socket );   // wait and listen
 
 				std::cout << "Reading data\n";
