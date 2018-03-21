@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 
 
 		std::array<char, 5> buf_tx;
-		buf_tx[0] = (k=='1'?1:2);
+		buf_tx[0] = k - '0';
 		std::cout << "first byte=" << (int)buf_tx[0] << '\n';
 		boost::system::error_code error;
 

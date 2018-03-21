@@ -1,7 +1,7 @@
 /**
 tst_tcp_server_v2.cpp
 */
-#include "tcp_server_v2.hpp"
+#include "tcp_server_v2b.hpp"
 
 //-----------------------------------------------------------------------------------
 struct MyTcpServer: public TcpServer_v2
@@ -29,7 +29,9 @@ struct MyTcpServer: public TcpServer_v2
 				std::copy( s.begin(), s.end(), out.begin() );
 			}
 			break;
-			default: std::cout << "client send invalid data\n";
+			default:
+				std::cerr << "client send invalid data !\n";
+				return std::make_pair(out, false);
 		}
 		return std::make_pair(out, true);
 	}

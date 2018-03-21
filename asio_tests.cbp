@@ -23,7 +23,6 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="Makefile" />
-		<Unit filename="so_q1.txt" />
 		<Unit filename="src/bgl_serial_1.cpp" />
 		<Unit filename="src/bgl_serial_2.cpp" />
 		<Unit filename="src/common_header.hpp" />
@@ -40,6 +39,7 @@
 		<Unit filename="src/tcp_server_Darrel.cpp" />
 		<Unit filename="src/tcp_server_v1.hpp" />
 		<Unit filename="src/tcp_server_v2.hpp" />
+		<Unit filename="src/tcp_server_v2b.hpp" />
 		<Unit filename="src/thread_1.cpp" />
 		<Unit filename="src/tst_tcp_server_v1.cpp" />
 		<Unit filename="src/tst_tcp_server_v2.cpp" />
